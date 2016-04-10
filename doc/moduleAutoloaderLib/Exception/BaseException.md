@@ -3,16 +3,23 @@ The BaseException package introduce the base exception
 object that store a message, a code and a previous exception.
 
 Use [strict](http://perldoc.perl.org/strict.html)
+
 Use [warnings](http://perldoc.perl.org/warnings.html)
 
-[ParameterException](./ParameterException.html) is a child
-[DirectoryException](./DirectoryException.html) is a child
-[YamlException](./YamlException.html) is a child
+[ParameterException](./ParameterException.md) is a child
+
+[DirectoryException](./DirectoryException.md) is a child
+
+[YamlException](./YamlException.md) is a child
 
 Version: 1.0
+
 Date: 2016/04/09
+
 Author: Matthieu vallance <matthieu.vallance@cscfa.fr>
-Module: [ModuleAutoloader](../../ModuleAutoloader.html)
+
+Module: [ModuleAutoloader](../../ModuleAutoloader.md)
+
 License: MIT
 
 ## Attributes

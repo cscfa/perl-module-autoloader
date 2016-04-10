@@ -3,15 +3,20 @@ The DirectoryException package define base parameter
 error exception. It's used to inform that a directory
 cause a runtime error.
 
-Child of [BaseException](./BaseException.html)
+Child of [BaseException](./BaseException.md)
 
 Use [strict](http://perldoc.perl.org/strict.html)
+
 Use [warnings](http://perldoc.perl.org/warnings.html)
 
 Version: 1.0
+
 Date: 2016/04/09
+
 Author: Matthieu vallance <matthieu.vallance@cscfa.fr>
-Module: [ModuleAutoloader](../../ModuleAutoloader.html)
+
+Module: [ModuleAutoloader](../../ModuleAutoloader.md)
+
 License: MIT
 
 ## Attributes

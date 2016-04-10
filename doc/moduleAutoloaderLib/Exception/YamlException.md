@@ -2,15 +2,20 @@
 The YamlException package define base yaml file
 error exception.
 
-Child of [BaseException](./BaseException.html)
+Child of [BaseException](./BaseException.md)
 
 Use [strict](http://perldoc.perl.org/strict.html)
+
 Use [warnings](http://perldoc.perl.org/warnings.html)
 
 Version: 1.0
+
 Date: 2016/04/09
+
 Author: Matthieu vallance <matthieu.vallance@cscfa.fr>
-Module: [ModuleAutoloader](../../ModuleAutoloader.html)
+
+Module: [ModuleAutoloader](../../ModuleAutoloader.md)
+
 License: MIT
 
 ## Attributes
