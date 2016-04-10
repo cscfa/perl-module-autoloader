@@ -95,6 +95,89 @@ sub recursiveSearchDirectoriesContaining
 	return \@directories;
 }
 
+sub searchFiles
+{
+	my ($self) = shift;
+	my ($args) = @_;
+	
+	if (!defined $args->{"directories"}) {
+		die ParameterException->new({
+			message => "directories parameter must be given for Explorer::searchFiles.",
+			code => "174e02371",
+		});
+	}
+	my $pattern = (defined $args->{"pattern"}) ? $args->{"pattern"} : ".+";
+	
+	my @files;
+	
+	if (defined $args->{"recursive"} and $args->{"recursive"}) {
+		foreach my $directory (@{$args->{"directories"}}) {
+			my @resultFiles = @{Explorer::recursiveSearchFiles($self, {
+				directory => $directory,
+				pattern => $pattern
+			})};
+			foreach my $recursiveFile (@resultFiles) {
+				push(@files, $recursiveFile);
+			}
+		}
+	} else {
+		foreach my $directory (@{$args->{"directories"}}) {
+			my $tmpResult = Explorer::getDirectoryContent($self, {
+				directory => $directory,
+				pattern => $pattern
+			});
+
+			if (@{$tmpResult->{file}}) {
+				foreach my $recursiveFile (@{$tmpResult->{file}}) {
+					push(@files, $recursiveFile);
+				}
+			}
+		}
+	}
+	
+	return \@files;
+}
+
+sub recursiveSearchFiles
+{
+	my ($self) = shift;
+	my ($args) = @_;
+	
+	if (!defined $args->{"directory"}) {
+		die ParameterException->new({
+			message => "directory parameter must be given for Explorer::recursiveSearchFiles.",
+			code => "f3608d5a1",
+		});
+	}
+	my $pattern = (defined $args->{"pattern"}) ? $args->{"pattern"} : ".+";
+
+	my @files;
+	my $tmpResult = Explorer::getDirectoryContent($self, {
+		directory => $args->{"directory"},
+		pattern => $pattern
+	});
+	
+	if (@{$tmpResult->{file}}) {
+		foreach my $recursionFile (@{$tmpResult->{file}}) {
+			push(@files, $recursionFile);
+		}
+	}
+
+	if (@{$tmpResult->{directory}}) {
+		foreach my $recursion (@{$tmpResult->{directory}}){
+			my @recursive = @{Explorer::recursiveSearchFiles($self, {
+				directory => $args->{"directory"}."/".$recursion,
+				pattern => $pattern
+			})};
+			foreach my $recursionFile (@recursive) {
+				push(@files, $recursionFile);
+			}
+		}
+	}
+	
+	return \@files;
+}
+
 sub getDirectoryContent
 {
 	my ($self) = shift;

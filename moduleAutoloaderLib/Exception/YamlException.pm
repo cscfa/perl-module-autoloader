@@ -1,79 +1,25 @@
-package BaseException;
+package YamlException;
 use strict;
 use warnings;
 
-$BaseException::VERSION = "1.0";
+$YamlException::VERSION = "1.0";
 
-sub new
-{
-	my $class = shift(@_);
-	my ($arguments) = @_;
-	my $self = bless({}, $class);
-	
-	foreach my $attribute ("message", "code", "previous"){
-		$self->{$attribute} = (!defined $arguments->{$attribute}) ? "" : $arguments->{$attribute};
-	}
-	
-	return $self;
-}
-
-sub getPrevious
-{
-	my $self = shift(@_);
-	return $self->{"previous"};
-}
-
-sub setPrevious
-{
-	my ($self, $value) = @_;
-	$self->{"previous"} = $value;
-	
-	return $self;
-}
-
-sub getCode
-{
-	my $self = shift(@_);
-	return $self->{"code"};
-}
-
-sub setCode
-{
-	my ($self, $value) = @_;
-	$self->{"code"} = $value;
-	
-	return $self;
-}
-
-sub getMessage
-{
-	my $self = shift(@_);
-	return $self->{"message"};
-}
-
-sub setMessage
-{
-	my ($self, $value) = @_;
-	$self->{"message"} = $value;
-	
-	return $self;
-}
+use BaseException;
+use parent qw(BaseException);
 
 1;
 __END__
 
 =begin markdown
 
-# BaseException
-The BaseException package introduce the base exception
-object that store a message, a code and a previous exception.
+# YamlException
+The YamlException package define base yaml file
+error exception.
+
+Child of [BaseException](./BaseException.html)
 
 Use [strict](http://perldoc.perl.org/strict.html)
 Use [warnings](http://perldoc.perl.org/warnings.html)
-
-[ParameterException](./ParameterException.html) is a child
-[DirectoryException](./DirectoryException.html) is a child
-[YamlException](./YamlException.html) is a child
 
 Version: 1.0
 Date: 2016/04/09

@@ -1,0 +1,10 @@
+autoloader:
+    default:
+        recursive: false
+        strict:    false
+#    directories:
+#        firstKey: 
+#            dir: "/perl/some/directory/to/load"
+#            strict: true
+#        secondKey: 
+#            dir: "/perl/some/other/directory/to/load"
