@@ -2,9 +2,11 @@ autoloader:
     default:
         recursive: false
         strict:    false
+        basePath:  "/"
 #    directories:
 #        firstKey: 
-#            dir: "/perl/some/directory/to/load"
+#            dir: "some/directory/to/load"
 #            strict: true
+#            recursive: true
 #        secondKey: 
 #            dir: "/perl/some/other/directory/to/load"

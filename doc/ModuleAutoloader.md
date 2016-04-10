@@ -3,25 +3,16 @@ The ModuleAutoloader package is used to load dynamicaly
 the include path of a perl script..
 
 Use [strict](http://perldoc.perl.org/strict.html)
-
 Use [warnings](http://perldoc.perl.org/warnings.html)
-
 Use [FindBin](http://perldoc.perl.org/FindBin.html)
-
 Use [Try::Tiny](http://search.cpan.org/~ether/Try-Tiny-0.24/lib/Try/Tiny.pm)
-
 Use [Getopt::Long](http://perldoc.perl.org/Getopt/Long.html)
-
 Use [Data::Dumper](http://perldoc.perl.org/Data/Dumper.html)
 
 Version: 1.0
-
 Date: 2016/04/09
-
 Author: Matthieu vallance <matthieu.vallance@cscfa.fr>
-
-Module: [ModuleAutoloader](./ModuleAutoloader.md)
-
+Module: [ModuleAutoloader](../../ModuleAutoloader.html)
 License: MIT
 
 ### Options
@@ -46,6 +37,7 @@ autoloader:
     default:
         recursive: true	# The default recursivity for the import directories (false as default)
         strict: true   	# define that the directories must be strict included (false as default)
+        basePath:  "/"  # define the root base path to process real path of relative directories
     directories:
         firstKey: # Configuration key (user defined, no one requirement)
             dir: "/perl/some/directory/to/load"
@@ -53,8 +45,14 @@ autoloader:
             dir: "/perl/some/other/directory/to/load"
             recursive: false # override the default recursivity for the current dir
             strict: false    # override the default strict for the current dir
+        thirdKey: # Configuration key (user defined, no one requirement)
+            dir: "relative/directory/to/load" # 
 ```
 The 'strict' element force the autoloader to inject the directory as it without check that it contain any pm|t|pl file.
+
+Note you can use a relative path since version 1.1.0. The relative path is parsed as real path before include.
+The real path take at relative base path the ModuleAutoloader.pm file path as default. This is override by the Autoload-RelativeBasePath
+option, or by the RelativeBasePath use message. See example for usage.
 
 ### Example of use :
 ```perl
@@ -79,6 +77,6 @@ BEGIN
 {
 	push @INC, $FindBin::Bin;
 }
-use ModuleAutoloader ["DebugLib=1", "DebugConfig=1", "LibPath=/some/path", "ConfigPath=/some/other/path"];
+use ModuleAutoloader ["DebugLib=1", "DebugConfig=1", "LibPath=/some/path", "ConfigPath=/some/other/path", "RelativeBasePath=$FindBin::Bin/"];
 ```
 

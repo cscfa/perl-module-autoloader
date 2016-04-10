@@ -7,17 +7,19 @@ use Getopt::Long qw(GetOptions);
 use Data::Dumper;
 Getopt::Long::Configure qw(pass_through);
 
-$ModuleAutoloader::VERSION = "1.0";
+$ModuleAutoloader::VERSION = "1.1";
 
 my $debugLib = '';
 my $libPath = $FindBin::Bin;
 my $debugConfig = '';
 my $configPath = $FindBin::Bin . '/moduleAutoloaderConfig';
+my $relativeBasePath = $FindBin::Bin;
 GetOptions (
 	"Autoload-DebugLib" => \$debugLib,
 	"Autoload-LibPath=s" => \$libPath,
 	"Autoload-DebugConfig" => \$debugConfig,
 	"Autoload-ConfigPath=s" => \$configPath,
+	"Autoload-RelativeBasePath=s" => \$relativeBasePath,
 );
 
 BEGIN
@@ -143,6 +145,7 @@ sub searchDefault
 	my $default;
 	$default->{recursive} = "false";
 	$default->{strict} = "false";
+	$default->{basePath} = "/";
 	
 	if (!$configuration->{default}) {
 		return $default;
@@ -150,16 +153,17 @@ sub searchDefault
 	
 	$default->{recursive} = $configuration->{default}->{recursive} if (defined $configuration->{default}->{recursive});
 	$default->{strict} = $configuration->{default}->{strict} if (defined $configuration->{default}->{strict});
+	$default->{basePath} = $configuration->{default}->{basePath} if (defined $configuration->{default}->{basePath});
 	return $default;
 }
 
 sub includeConfigurationDirectories
 {
 	my ($args) = @_;
-	my $configuration = $args->{configuration};
-	my $defaults = $args->{defaults};
+	my $configuration = $args->{"configuration"};
+	my $defaults = $args->{"defaults"};
 	
-	if (!$configuration->{directories}) {
+	if (!$configuration->{"directories"}) {
 		return;
 	}
 	
@@ -190,12 +194,17 @@ sub includeConfigurationDirectories
 					$strict = 0 if ($defaults->{strict} eq "false");
 				}
 				
-				ModuleAutoloader::loadLibrary({
+				my $realPath = ModuleAutoloader::getPath({
 					"path" => $directories->{$dirKey}->{dir},
+					"defaults" => $defaults,
+				});
+				
+				ModuleAutoloader::loadLibrary({
+					"path" => $realPath,
 					"recursive" => $recursive,
 					"error" => "Autoloader unable to load $dirKey",
 				});
-				ModuleAutoloader::pushInc($directories->{$dirKey}->{dir}) if $strict;
+				ModuleAutoloader::pushInc($realPath) if $strict;
 			} else {
 				my $exception = YamlException->new({
 					message => "Yaml format error for '$dirKey' element. Need 'dir' key with directory path",
@@ -262,7 +271,37 @@ sub applyMessage
 		($libPath) = ($messages =~ /LibPath=(.+)/);
 	} elsif ($messages =~ /ConfigPath=/){
 		($configPath) = ($messages =~ /ConfigPath=(.+)/);
+	} elsif ($messages =~ /RelativeBasePath=/){
+		($relativeBasePath) = ($messages =~ /RelativeBasePath=(.+)/);
 	}
+}
+
+sub getPath
+{
+	my ($args) = @_;
+	my $path = $args->{"path"};
+	my $default = $args->{"defaults"};
+	
+	if (ModuleAutoloader::isRelative({"path"=>$path, "defaults"=>$default})) {
+		if ($path =~ /^\//) {
+			return $relativeBasePath . $path;
+		} else {
+			return $relativeBasePath . '/' . $path;
+		}
+	} else {
+		return $path;
+	}
+}
+
+sub isRelative
+{
+	my ($args) = @_;
+	my $path = $args->{"path"};
+	my $default = $args->{"defaults"};
+	
+	my $basePath = $default->{"basePath"};
+	
+	return !($path =~ /^$basePath/);
 }
 
 1;
@@ -309,6 +348,7 @@ autoloader:
     default:
         recursive: true	# The default recursivity for the import directories (false as default)
         strict: true   	# define that the directories must be strict included (false as default)
+        basePath:  "/"  # define the root base path to process real path of relative directories
     directories:
         firstKey: # Configuration key (user defined, no one requirement)
             dir: "/perl/some/directory/to/load"
@@ -316,8 +356,14 @@ autoloader:
             dir: "/perl/some/other/directory/to/load"
             recursive: false # override the default recursivity for the current dir
             strict: false    # override the default strict for the current dir
+        thirdKey: # Configuration key (user defined, no one requirement)
+            dir: "relative/directory/to/load" # 
 ```
 The 'strict' element force the autoloader to inject the directory as it without check that it contain any pm|t|pl file.
+
+Note you can use a relative path since version 1.1.0. The relative path is parsed as real path before include.
+The real path take at relative base path the ModuleAutoloader.pm file path as default. This is override by the Autoload-RelativeBasePath
+option, or by the RelativeBasePath use message. See example for usage.
 
 ### Example of use :
 ```perl
@@ -342,7 +388,7 @@ BEGIN
 {
 	push @INC, $FindBin::Bin;
 }
-use ModuleAutoloader ["DebugLib=1", "DebugConfig=1", "LibPath=/some/path", "ConfigPath=/some/other/path"];
+use ModuleAutoloader ["DebugLib=1", "DebugConfig=1", "LibPath=/some/path", "ConfigPath=/some/other/path", "RelativeBasePath=$FindBin::Bin/"];
 ```
 
 =end markdown
