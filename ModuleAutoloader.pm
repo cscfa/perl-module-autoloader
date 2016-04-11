@@ -7,7 +7,7 @@ use Getopt::Long qw(GetOptions);
 use Data::Dumper;
 Getopt::Long::Configure qw(pass_through);
 
-$ModuleAutoloader::VERSION = "1.1";
+$ModuleAutoloader::VERSION = "1.1.1";
 
 my $debugLib = '';
 my $libPath = $FindBin::Bin;
@@ -22,12 +22,22 @@ GetOptions (
 	"Autoload-RelativeBasePath=s" => \$relativeBasePath,
 );
 
+my $currentFileDirectory = " ";
 BEGIN
 {
-	push(@INC, "$FindBin::Bin/moduleAutoloaderLib");
-	push(@INC, "$FindBin::Bin/moduleAutoloaderLib/Exception");
-	push(@INC, "$FindBin::Bin/moduleAutoloaderLib/Explorer");
-	push(@INC, "$FindBin::Bin/moduleAutoloaderLib/Hash-Merge-0.200/lib/");
+	foreach my $dir (@INC) {
+		next if (!defined $dir);
+		next if (ref($dir));
+		if (-f $dir."/ModuleAutoloader.pm") {
+			$currentFileDirectory = $dir."/";
+			last;
+		}
+	}
+
+	push(@INC, $currentFileDirectory."/moduleAutoloaderLib");
+	push(@INC, $currentFileDirectory."/moduleAutoloaderLib/Exception");
+	push(@INC, $currentFileDirectory."/moduleAutoloaderLib/Explorer");
+	push(@INC, $currentFileDirectory."/moduleAutoloaderLib/Hash-Merge-0.200/lib/");
 }
 
 use Explorer;
@@ -320,10 +330,10 @@ Use [Try::Tiny](http://search.cpan.org/~ether/Try-Tiny-0.24/lib/Try/Tiny.pm)
 Use [Getopt::Long](http://perldoc.perl.org/Getopt/Long.html)
 Use [Data::Dumper](http://perldoc.perl.org/Data/Dumper.html)
 
-Version: 1.0
-Date: 2016/04/09
+Version: 1.1.1
+Date: 2016/04/11
 Author: Matthieu vallance <matthieu.vallance@cscfa.fr>
-Module: [ModuleAutoloader](../../ModuleAutoloader.html)
+Module: [ModuleAutoloader](./ModuleAutoloader.md)
 License: MIT
 
 ### Options

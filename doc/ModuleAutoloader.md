@@ -9,10 +9,10 @@ Use [Try::Tiny](http://search.cpan.org/~ether/Try-Tiny-0.24/lib/Try/Tiny.pm)
 Use [Getopt::Long](http://perldoc.perl.org/Getopt/Long.html)
 Use [Data::Dumper](http://perldoc.perl.org/Data/Dumper.html)
 
-Version: 1.0
-Date: 2016/04/09
+Version: 1.1.1
+Date: 2016/04/11
 Author: Matthieu vallance <matthieu.vallance@cscfa.fr>
-Module: [ModuleAutoloader](../../ModuleAutoloader.html)
+Module: [ModuleAutoloader](./ModuleAutoloader.md)
 License: MIT
 
 ### Options
